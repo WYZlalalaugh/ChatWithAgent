@@ -1,0 +1,49 @@
+{
+  "name": "chatagent-frontend",
+  "version": "1.0.0",
+  "description": "ChatAgent Web管理面板",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "type-check": "vue-tsc --noEmit",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "format": "prettier --write src/"
+  },
+  "dependencies": {
+    "vue": "^3.3.8",
+    "vue-router": "^4.2.5",
+    "pinia": "^2.1.7",
+    "element-plus": "^2.4.4",
+    "axios": "^1.6.2",
+    "@element-plus/icons-vue": "^2.1.0",
+    "echarts": "^5.4.3",
+    "vue-echarts": "^6.6.1",
+    "dayjs": "^1.11.10",
+    "nprogress": "^0.2.0",
+    "lodash-es": "^4.17.21",
+    "crypto-js": "^4.2.0",
+    "js-cookie": "^3.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "@types/js-cookie": "^3.0.6",
+    "@types/lodash-es": "^4.17.12",
+    "@types/nprogress": "^0.2.3",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "@vitejs/plugin-vue": "^4.5.0",
+    "@vue/eslint-config-prettier": "^8.0.0",
+    "@vue/eslint-config-typescript": "^12.0.0",
+    "@vue/tsconfig": "^0.4.0",
+    "eslint": "^8.54.0",
+    "eslint-plugin-vue": "^9.18.1",
+    "prettier": "^3.1.0",
+    "typescript": "~5.2.2",
+    "unplugin-auto-import": "^0.16.7",
+    "unplugin-vue-components": "^0.25.2",
+    "vite": "^4.5.0",
+    "vue-tsc": "^1.8.22"
+  }
+}
