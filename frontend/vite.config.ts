@@ -24,18 +24,27 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
+  // 开发服务器优化
+  optimizeDeps: {
+    include: ['vue', 'vue-router', 'pinia', 'element-plus'],
+    exclude: ['@element-plus/icons-vue']
+  },
   server: {
-    port: 3000,
+    port: 3001,
     open: true,
     cors: true,
+    host: true, // 允许外部访问
+    hmr: {
+      overlay: false // 禁用错误覆盖层
+    },
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:9800',
         changeOrigin: true,
         secure: false,
       },
       '/ws': {
-        target: 'ws://localhost:8000',
+        target: 'ws://localhost:9800',
         ws: true,
         changeOrigin: true,
       },

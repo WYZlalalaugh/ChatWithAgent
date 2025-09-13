@@ -9,7 +9,7 @@ sqlalchemy==2.0.23
 alembic==1.13.1
 pymysql==1.1.0
 redis==5.0.1
-cryptography==41.0.8
+cryptography==41.0.7
 
 # AI 和机器学习
 langchain==0.0.350
@@ -17,13 +17,13 @@ langchain-community==0.0.7
 openai==1.3.7
 anthropic==0.7.8
 transformers==4.36.0
-torch==2.1.1
+torch==2.2.0
 sentence-transformers==2.2.2
 
 # 向量数据库
 chromadb==0.4.18
 qdrant-client==1.7.0
-faiss-cpu==1.7.4
+faiss-cpu==1.8.0
 pinecone-client==2.2.4
 weaviate-client==3.25.3
 

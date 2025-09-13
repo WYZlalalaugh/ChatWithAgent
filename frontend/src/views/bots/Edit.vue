@@ -1,11 +1,11 @@
 <template>
   <div class="page-container">
     <div class="page-header">
-      <h1 class="page-title">创建机器人</h1>
+      <h1 class="page-title">编辑机器人</h1>
       <div class="page-actions">
         <el-button @click="$router.back()">取消</el-button>
         <el-button type="primary" :loading="loading" @click="handleSubmit">
-          创建机器人
+          保存修改
         </el-button>
       </div>
     </div>
@@ -70,67 +70,21 @@
             <el-select
               v-model="formData.platform_type"
               placeholder="请选择平台类型"
-              @change="handlePlatformChange"
+              disabled
             >
               <el-option
                 v-for="platform in platforms"
                 :key="platform.value"
                 :label="platform.label"
                 :value="platform.value"
-              >
-                <div class="platform-option">
-                  <el-icon class="platform-icon">
-                    <component :is="platform.icon" />
-                  </el-icon>
-                  <span>{{ platform.label }}</span>
-                </div>
-              </el-option>
+              />
             </el-select>
           </el-form-item>
-
-          <!-- 动态平台配置 -->
-          <template v-if="formData.platform_type">
-            <component
-              :is="getPlatformConfigComponent(formData.platform_type)"
-              v-model="formData.platform_config"
-              @validate="handlePlatformValidation"
-            />
-          </template>
         </div>
 
         <!-- AI 模型配置 -->
         <div class="form-section">
           <h3 class="form-section-title">AI 模型配置</h3>
-          
-          <el-form-item label="模型提供商" prop="llm_provider">
-            <el-select
-              v-model="formData.llm_config.provider"
-              placeholder="请选择模型提供商"
-              @change="handleProviderChange"
-            >
-              <el-option
-                v-for="provider in providers"
-                :key="provider.value"
-                :label="provider.label"
-                :value="provider.value"
-              />
-            </el-select>
-          </el-form-item>
-          
-          <el-form-item label="模型" prop="llm_model">
-            <el-select
-              v-model="formData.llm_config.model"
-              placeholder="请选择模型"
-              :disabled="!formData.llm_config.provider"
-            >
-              <el-option
-                v-for="model in availableModels"
-                :key="model.value"
-                :label="model.label"
-                :value="model.value"
-              />
-            </el-select>
-          </el-form-item>
           
           <el-form-item label="系统提示词">
             <el-input
@@ -200,36 +154,12 @@
             </el-form-item>
           </template>
           
-          <el-form-item label="启用插件">
+          <el-form-item label="状态">
             <el-switch
-              v-model="formData.enable_plugins"
-              @change="handlePluginsToggle"
+              v-model="formData.is_active"
+              active-text="启用"
+              inactive-text="禁用"
             />
-          </el-form-item>
-          
-          <template v-if="formData.enable_plugins">
-            <el-form-item label="选择插件">
-              <el-select
-                v-model="formData.plugin_ids"
-                multiple
-                placeholder="请选择要启用的插件"
-                style="width: 100%;"
-              >
-                <el-option
-                  v-for="plugin in availablePlugins"
-                  :key="plugin.id"
-                  :label="plugin.name"
-                  :value="plugin.id"
-                />
-              </el-select>
-            </el-form-item>
-          </template>
-          
-          <el-form-item label="自动启动">
-            <el-switch v-model="formData.auto_start" />
-            <div class="param-description">
-              创建后自动启动机器人。
-            </div>
           </el-form-item>
         </div>
       </el-form>
@@ -238,23 +168,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, defineAsyncComponent } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules, UploadProps } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
 
-// 动态导入平台配置组件
-const QQConfig = defineAsyncComponent(() => import('./components/QQConfig.vue'))
-const WeChatConfig = defineAsyncComponent(() => import('./components/WeChatConfig.vue'))
-const FeishuConfig = defineAsyncComponent(() => import('./components/FeishuConfig.vue'))
-const DingtalkConfig = defineAsyncComponent(() => import('./components/DingtalkConfig.vue'))
-
+const route = useRoute()
 const router = useRouter()
 
 // 表单引用
 const formRef = ref<FormInstance>()
 const loading = ref(false)
+
+// 机器人ID
+const botId = route.params.id as string
 
 // 表单数据
 const formData = reactive({
@@ -262,19 +190,14 @@ const formData = reactive({
   description: '',
   avatar_url: '',
   platform_type: '',
-  platform_config: {},
   llm_config: {
-    provider: 'openai',
-    model: 'gpt-3.5-turbo',
-    system_prompt: '你是一个有用、无害、诚实的AI助手。请用友好、专业的语气回答用户的问题。',
+    system_prompt: '',
     temperature: 0.7,
     max_tokens: 2000
   },
   enable_knowledge: false,
   knowledge_base_ids: [],
-  enable_plugins: false,
-  plugin_ids: [],
-  auto_start: true
+  is_active: true
 })
 
 // 表单验证规则
@@ -282,60 +205,17 @@ const formRules: FormRules = {
   name: [
     { required: true, message: '请输入机器人名称', trigger: 'blur' },
     { min: 2, max: 50, message: '名称长度为2-50个字符', trigger: 'blur' }
-  ],
-  platform_type: [
-    { required: true, message: '请选择平台类型', trigger: 'change' }
-  ],
-  llm_provider: [
-    { required: true, message: '请选择模型提供商', trigger: 'change' }
-  ],
-  llm_model: [
-    { required: true, message: '请选择模型', trigger: 'change' }
   ]
 }
 
 // 平台选项
 const platforms = ref([
-  { label: 'QQ', value: 'qq', icon: 'ChatDotRound' },
-  { label: '微信', value: 'wechat', icon: 'ChatLineSquare' },
-  { label: '飞书', value: 'feishu', icon: 'Message' },
-  { label: '钉钉', value: 'dingtalk', icon: 'ChatLineRound' },
-  { label: 'Telegram', value: 'telegram', icon: 'ChatDotSquare' }
+  { label: 'QQ', value: 'qq' },
+  { label: '微信', value: 'wechat' },
+  { label: '飞书', value: 'feishu' },
+  { label: '钉钉', value: 'dingtalk' },
+  { label: 'Telegram', value: 'telegram' }
 ])
-
-// 模型提供商
-const providers = ref([
-  { label: 'OpenAI', value: 'openai' },
-  { label: 'Anthropic', value: 'anthropic' },
-  { label: 'Azure OpenAI', value: 'azure' },
-  { label: '本地模型', value: 'local' }
-])
-
-// 可用模型
-const availableModels = computed(() => {
-  const modelMap: Record<string, Array<{label: string, value: string}>> = {
-    openai: [
-      { label: 'GPT-3.5 Turbo', value: 'gpt-3.5-turbo' },
-      { label: 'GPT-4', value: 'gpt-4' },
-      { label: 'GPT-4 Turbo', value: 'gpt-4-turbo-preview' }
-    ],
-    anthropic: [
-      { label: 'Claude 3 Haiku', value: 'claude-3-haiku-20240307' },
-      { label: 'Claude 3 Sonnet', value: 'claude-3-sonnet-20240229' },
-      { label: 'Claude 3 Opus', value: 'claude-3-opus-20240229' }
-    ],
-    azure: [
-      { label: 'GPT-3.5 Turbo', value: 'gpt-35-turbo' },
-      { label: 'GPT-4', value: 'gpt-4' }
-    ],
-    local: [
-      { label: 'LLaMA 2', value: 'llama2' },
-      { label: 'ChatGLM', value: 'chatglm' }
-    ]
-  }
-  
-  return modelMap[formData.llm_config.provider as keyof typeof modelMap] || []
-})
 
 // 知识库列表（模拟数据）
 const knowledgeBases = ref([
@@ -344,51 +224,11 @@ const knowledgeBases = ref([
   { id: '3', name: '技术文档' }
 ])
 
-// 可用插件（模拟数据）
-const availablePlugins = ref([
-  { id: '1', name: '天气查询' },
-  { id: '2', name: '快递查询' },
-  { id: '3', name: '翻译助手' }
-])
-
-// 获取平台配置组件
-const getPlatformConfigComponent = (platform: string) => {
-  const componentMap: Record<string, any> = {
-    qq: QQConfig,
-    wechat: WeChatConfig,
-    feishu: FeishuConfig,
-    dingtalk: DingtalkConfig
-  }
-  return componentMap[platform as keyof typeof componentMap] || 'div'
-}
-
-// 处理平台变化
-const handlePlatformChange = (platform: string) => {
-  formData.platform_config = {}
-}
-
-// 处理提供商变化
-const handleProviderChange = (provider: string) => {
-  formData.llm_config.model = ''
-}
-
 // 处理知识库开关
 const handleKnowledgeToggle = (enabled: boolean) => {
   if (!enabled) {
     formData.knowledge_base_ids = []
   }
-}
-
-// 处理插件开关
-const handlePluginsToggle = (enabled: boolean) => {
-  if (!enabled) {
-    formData.plugin_ids = []
-  }
-}
-
-// 处理平台配置验证
-const handlePlatformValidation = (isValid: boolean) => {
-  // 平台配置验证回调
 }
 
 // 头像上传前验证
@@ -417,6 +257,34 @@ const handleAvatarUpload = (options: any) => {
   }, 1000)
 }
 
+// 加载机器人信息
+const loadBotInfo = async () => {
+  try {
+    loading.value = true
+    // TODO: 调用API获取机器人信息
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // 模拟数据
+    Object.assign(formData, {
+      name: '测试机器人',
+      description: '这是一个测试机器人',
+      platform_type: 'qq',
+      llm_config: {
+        system_prompt: '你是一个有用的AI助手',
+        temperature: 0.7,
+        max_tokens: 2000
+      },
+      enable_knowledge: false,
+      knowledge_base_ids: [],
+      is_active: true
+    })
+  } catch (error) {
+    ElMessage.error('加载机器人信息失败')
+  } finally {
+    loading.value = false
+  }
+}
+
 // 提交表单
 const handleSubmit = async () => {
   if (!formRef.value) return
@@ -426,20 +294,24 @@ const handleSubmit = async () => {
     
     loading.value = true
     
-    // TODO: 调用API创建机器人
+    // TODO: 调用API更新机器人
     await new Promise(resolve => setTimeout(resolve, 2000))
     
-    ElMessage.success('机器人创建成功')
+    ElMessage.success('机器人更新成功')
     router.push('/bots')
     
   } catch (error) {
-    if (error !== false) { // 验证失败时error为false
-      ElMessage.error('创建失败，请检查表单')
+    if (error !== false) {
+      ElMessage.error('更新失败，请检查表单')
     }
   } finally {
     loading.value = false
   }
 }
+
+onMounted(() => {
+  loadBotInfo()
+})
 </script>
 
 <style scoped>
@@ -483,16 +355,6 @@ const handleSubmit = async () => {
   color: var(--el-text-color-secondary);
   font-size: 12px;
   line-height: 1.5;
-}
-
-.platform-option {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.platform-icon {
-  font-size: 16px;
 }
 
 .param-description {

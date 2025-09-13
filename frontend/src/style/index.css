@@ -17,6 +17,15 @@
   --header-height: 60px;
   --sidebar-width: 240px;
   --sidebar-collapsed-width: 64px;
+  
+  /* Element Plus 兼容 */
+  --el-color-primary: #409eff;
+  --el-bg-color: #ffffff;
+  --el-bg-color-page: #f5f7fa;
+  --el-border-color: #dcdfe6;
+  --el-text-color-primary: #303133;
+  --el-menu-bg-color: #ffffff;
+  --el-menu-text-color: #303133;
 }
 
 [data-theme="dark"] {

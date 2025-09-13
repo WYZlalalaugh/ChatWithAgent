@@ -74,7 +74,7 @@ class Document(BaseModel):
     content = Column(Text, nullable=True)
     
     # 元数据
-    metadata = Column(JSON, nullable=True)
+    doc_metadata = Column(JSON, nullable=True)
     
     # 关系
     knowledge_base = relationship("KnowledgeBase", back_populates="documents")
@@ -105,7 +105,7 @@ class DocumentChunk(BaseModel):
     embedding = Column(JSON, nullable=True)
     
     # 元数据
-    metadata = Column(JSON, nullable=True)
+    chunk_metadata = Column(JSON, nullable=True)
     
     # 分块索引
     chunk_index = Column(Integer, nullable=False)

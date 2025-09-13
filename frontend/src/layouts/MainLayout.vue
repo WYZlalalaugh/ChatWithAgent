@@ -9,9 +9,13 @@
     >
       <div class="sidebar-header">
         <div class="logo">
-          <img v-if="!isCollapsed" src="/logo.png" alt="ChatAgent" class="logo-image" />
-          <span v-if="!isCollapsed" class="logo-text">ChatAgent</span>
-          <img v-else src="/logo-mini.png" alt="CA" class="logo-mini" />
+          <div v-if="!isCollapsed" class="logo-full">
+            <el-icon class="logo-icon" size="32"><ChatDotRound /></el-icon>
+            <span class="logo-text">ChatAgent</span>
+          </div>
+          <div v-else class="logo-mini">
+            <el-icon size="32"><ChatDotRound /></el-icon>
+          </div>
         </div>
       </div>
       
@@ -69,7 +73,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Expand, Fold } from '@element-plus/icons-vue'
+import { Expand, Fold, ChatDotRound } from '@element-plus/icons-vue'
 import MenuItem from './components/MenuItem.vue'
 import Breadcrumb from './components/Breadcrumb.vue'
 import HeaderActions from './components/HeaderActions.vue'
@@ -154,11 +158,17 @@ const toggleSidebar = () => {
   display: flex;
   align-items: center;
   gap: 12px;
+  cursor: pointer;
 }
 
-.logo-image {
-  height: 32px;
-  width: auto;
+.logo-full {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  color: var(--el-color-primary);
 }
 
 .logo-text {
@@ -168,8 +178,10 @@ const toggleSidebar = () => {
 }
 
 .logo-mini {
-  height: 32px;
-  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--el-color-primary);
 }
 
 .sidebar-content {

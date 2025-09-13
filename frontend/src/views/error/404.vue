@@ -50,7 +50,7 @@
             </li>
             <li>
               <el-button text @click="$router.push('/bots')">
-                <el-icon><Robot /></el-icon>
+                <el-icon><Avatar /></el-icon>
                 管理机器人
               </el-button>
             </li>
@@ -83,7 +83,6 @@ import {
   House,
   Back,
   Dashboard,
-  Robot,
   ChatLineRound,
   Collection
 } from '@element-plus/icons-vue'

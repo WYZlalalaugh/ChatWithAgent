@@ -41,7 +41,7 @@ const routes: RouteRecordRaw[] = [
         redirect: '/bots/list',
         meta: {
           title: '机器人管理',
-          icon: 'Robot',
+          icon: 'Avatar',
         },
         children: [
           {
@@ -255,6 +255,12 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   NProgress.start()
 
+  // 暂时禁用认证检查，直接通过（等后端 API 完善后再启用）
+  next()
+  return
+
+  // 以下代码暂时注释
+  /*
   const authStore = useAuthStore()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth !== false)
 
@@ -292,6 +298,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   next()
+  */
 })
 
 router.afterEach((to) => {

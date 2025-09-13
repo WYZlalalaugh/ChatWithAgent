@@ -13,7 +13,7 @@
         <div class="stats-card-header">
           <span class="stats-card-title">活跃机器人</span>
           <el-icon class="stats-card-icon" style="color: #409EFF;">
-            <Robot />
+            <Avatar />
           </el-icon>
         </div>
         <div class="stats-card-value">{{ stats.activeBots }}</div>
@@ -187,7 +187,7 @@ import VChart from 'vue-echarts'
 import dayjs from 'dayjs'
 import {
   Refresh,
-  Robot,
+  Avatar,
   ChatLineRound,
   User,
   Collection,

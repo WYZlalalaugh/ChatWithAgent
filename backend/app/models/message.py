@@ -31,7 +31,7 @@ class ChatMessage(BaseModel):
     content = Column(Text, nullable=True)
     
     # 元数据（JSON 格式，存储文件路径、媒体信息等）
-    metadata = Column(JSON, nullable=True)
+    message_metadata = Column(JSON, nullable=True)
     
     # 是否来自机器人
     is_from_bot = Column(Boolean, default=False, nullable=False)

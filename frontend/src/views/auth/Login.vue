@@ -9,7 +9,7 @@
           
           <div class="features">
             <div class="feature-item">
-              <el-icon class="feature-icon"><Robot /></el-icon>
+              <el-icon class="feature-icon"><Avatar /></el-icon>
               <div class="feature-text">
                 <h3>智能机器人</h3>
                 <p>支持多平台、多模态的智能聊天机器人</p>
@@ -156,7 +156,7 @@ import {
   Lock,
   Message,
   UserFilled,
-  Robot,
+  Avatar,
   Connection,
   Collection
 } from '@element-plus/icons-vue'
